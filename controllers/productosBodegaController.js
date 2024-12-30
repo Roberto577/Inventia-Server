@@ -2,6 +2,8 @@ const pool = require('../db/pool');
 
 exports.getProductosBodega = async (req, res) => {
     const { bodega_id } = req.params; // Obtiene el ID de la bodega desde los parámetros de la ruta
+
+    console.log('bodega_id',bodega_id)
   
     if (!bodega_id) {
       return res.status(400).json({ error: "El ID de la bodega es obligatorio" });
@@ -27,7 +29,8 @@ exports.getProductosBodega = async (req, res) => {
       const result = await pool.query(query, values);
   
       if (result.rows.length === 0) {
-        return res.status(404).json({ error: "No se encontraron productos para esta bodega" });
+        console.log('No se encontraron productos para esta bodega');
+        return res.status(200).json(result.rows);
       }
   
       res.status(200).json(result.rows); // Devuelve los productos encontrados

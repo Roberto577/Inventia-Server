@@ -9,6 +9,8 @@ app.use(cors());
 // app.use(bodyParser.json());
 
 // Importar las rutas
+const authRoutes = require('./routes/authRoutes');
+const usuariosRoutes = require('./routes/usuariosRoutes');
 const productosRoutes = require('./routes/productosRoutes');
 const productosBodegaRoutes = require('./routes/productosBodegaRoutes');
 const preciosRoutes = require('./routes/preciosRoutes');
@@ -16,6 +18,8 @@ const vencimientoRoutes = require('./routes/fechaVencimientoRoutes');
 const movimientoInventarioRoutes = require('./routes/movimientoInventarioRoutes');
 
 // Usar las rutas
+app.use('/api/auth', authRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/productosBodega', productosBodegaRoutes);
 app.use('/api/precios', preciosRoutes);
