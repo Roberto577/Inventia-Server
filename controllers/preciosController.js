@@ -2,6 +2,8 @@ const pool = require('../db/pool');
 
 exports.createHistorialPrecio = async (req, res) => {
     const { producto_bodega_id, precio_anterior, precio_nuevo, descripcion, usuario_id } = req.body;
+
+    console.log('req.body',req.body)
   
     if (!producto_bodega_id || !precio_anterior || !precio_nuevo || !usuario_id) {
       return res.status(400).json({
@@ -29,21 +31,36 @@ exports.createHistorialPrecio = async (req, res) => {
 };
 
 exports.getHistorialPreciosByProductoBodegaId = async (req, res) => {
-  const { id } = req.params; // ID del producto en bodega
+  const { producto_bodega_id } = req.params; // ID del producto en bodega
+  console.log('Entra?')
+  console.log('producto_bodega_id',producto_bodega_id)
 
-  if (!id) {
+  if (!producto_bodega_id) {
     return res.status(400).json({ error: "El ID del producto en bodega es obligatorio" });
   }
 
   try {
     const query = `
-      SELECT *
-      FROM historial_precios
-      WHERE producto_bodega_id = $1
-      ORDER BY fecha_cambio DESC;
+      SELECT 
+        hppb.*, 
+        p.nombre AS producto_nombre, 
+        u.nombre AS usuario_nombre
+      FROM 
+        historial_precios_producto_bodega hppb
+      JOIN 
+        productos_bodega pb ON hppb.producto_bodega_id = pb.id
+      JOIN 
+        productos p ON pb.producto_id = p.id
+      JOIN 
+        usuarios u ON hppb.usuario_id = u.id
+      WHERE 
+        hppb.producto_bodega_id = $1
+      ORDER BY 
+        hppb.fecha_cambio DESC;
     `;
 
-    const values = [id];
+
+    const values = [producto_bodega_id];
 
     const result = await pool.query(query, values);
 
@@ -52,6 +69,7 @@ exports.getHistorialPreciosByProductoBodegaId = async (req, res) => {
     }
 
     res.status(200).json(result.rows); // Devuelve el historial de precios
+    console.log('result.rows',result.rows)
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Error al obtener el historial de precios" });

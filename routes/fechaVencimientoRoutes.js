@@ -4,7 +4,7 @@ const fechaVencimientoController = require('../controllers/fechaVencimientoContr
 
 // Ruta para crear un historial de precios
 router.post('/', fechaVencimientoController.createVencimiento);
-// router.get('/:sku', productosController.getProductoBySKU);
+router.get('/:producto_bodega_id', fechaVencimientoController.getVencimientosByProductoBodegaId);
 // router.post('/', productosController.createProducto);
 
 module.exports = router;

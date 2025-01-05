@@ -23,7 +23,7 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/productosBodega', productosBodegaRoutes);
 app.use('/api/precios', preciosRoutes);
-app.use('/api/vencimiento', vencimientoRoutes);
+app.use('/api/vencimientos', vencimientoRoutes);
 app.use('/api/movimiento', movimientoInventarioRoutes);
 
 // Rutas
