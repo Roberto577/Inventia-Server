@@ -40,6 +40,46 @@ exports.getProductosBodega = async (req, res) => {
     }
 };
 
+exports.getProductosBodegaLowStock = async (req, res) => {
+  const { bodega_id } = req.params; // Obtiene el ID de la bodega desde los parámetros de la ruta
+
+  console.log('bodega_id',bodega_id)
+
+  if (!bodega_id) {
+    return res.status(400).json({ error: "El ID de la bodega es obligatorio" });
+  }
+
+  try {
+      const query = `
+          SELECT 
+          pb.*, 
+          p.nombre AS nombre, 
+          p.sku, 
+          p.imagen_url,
+          p.id_categoria, 
+          c.nombre AS categoria
+          FROM productos_bodega pb
+          INNER JOIN productos p ON pb.producto_id = p.id
+          INNER JOIN categorias c ON p.id_categoria = c.id
+          WHERE pb.bodega_id = $1 and pb.stock <= 10;
+      `;
+
+    const values = [bodega_id];
+
+    const result = await pool.query(query, values);
+
+    if (result.rows.length === 0) {
+      console.log('No se encontraron productos para esta bodega');
+      return res.status(200).json(result.rows);
+    }
+
+    res.status(200).json(result.rows); // Devuelve los productos encontrados
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: "Error al obtener los productos de la bodega" });
+  }
+};
+
 exports.getProductoBodegaByProductoId = async (req, res) => {
   const { bodega_id, producto_id } = req.params; // Obtiene los parámetros desde la ruta
 
@@ -160,5 +200,35 @@ exports.deleteProductoBodega = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Error al eliminar el producto en la bodega" });
+  }
+};
+
+exports.getStockProductoBodega = async (req, res) => {
+  const { bodega_id, productobodega_id } = req.params; // Obtiene ambos parámetros desde la ruta
+
+  if (!bodega_id || !productobodega_id) {
+      return res.status(400).json({ error: "El ID del producto de bodega y el ID del producto son obligatorios" });
+  }
+
+  try {
+      // Consulta para obtener el stock actual usando el producto_bodega_id y producto_id
+      const query = `
+          SELECT stock
+          FROM productos_bodega
+          WHERE bodega_id = $1 AND id = $2;
+      `;
+
+      const values = [bodega_id, productobodega_id];
+
+      const result = await pool.query(query, values);
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ error: 'Producto no encontrado en la bodega especificada' });
+      }
+
+      res.status(200).json(result.rows[0]); // Retorna el stock actual
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: "Error al obtener el stock del producto en la bodega" });
   }
 };

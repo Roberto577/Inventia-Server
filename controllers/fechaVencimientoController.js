@@ -71,7 +71,8 @@ exports.getAllVencimientos = async (req, res) => {
             JOIN 
                 productos p ON pb.producto_id = p.id
             JOIN 
-                usuarios u ON vpb.usuario_id = u.id;
+                usuarios u ON vpb.usuario_id = u.id
+            ORDER BY fecha_vencimiento asc;
         `;
         const result = await pool.query(query);
         res.status(200).json(result.rows);
