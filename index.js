@@ -16,6 +16,8 @@ const productosBodegaRoutes = require('./routes/productosBodegaRoutes');
 const preciosRoutes = require('./routes/preciosRoutes');
 const vencimientoRoutes = require('./routes/fechaVencimientoRoutes');
 const movimientoInventarioRoutes = require('./routes/movimientoInventarioRoutes');
+const negociosRoutes = require('./routes/negociosRoutes');
+const bodegasRoutes = require('./routes/bodegasRoutes');
 
 // Usar las rutas
 app.use('/api/auth', authRoutes);
@@ -25,6 +27,8 @@ app.use('/api/productosBodega', productosBodegaRoutes);
 app.use('/api/precios', preciosRoutes);
 app.use('/api/vencimientos', vencimientoRoutes);
 app.use('/api/movimiento', movimientoInventarioRoutes);
+app.use('/api/negocios', negociosRoutes);
+app.use('/api/bodegas', bodegasRoutes);
 
 // Rutas
 app.get('/', (req, res) => {

@@ -1,15 +1,3 @@
--- Crear bodegas
-CREATE TABLE bodegas (
-    id SERIAL PRIMARY KEY,                  -- Identificador único de la bodega
-    usuario_id INTEGER NOT NULL,            -- Relación con la tabla de usuarios
-    nombre VARCHAR(100) NOT NULL,           -- Nombre de la bodega
-    ubicacion VARCHAR(255),                 -- Ubicación de la bodega (opcional)
-    descripcion TEXT,                       -- Descripción de la bodega (opcional)
-    fecha_creacion TIMESTAMP DEFAULT NOW(), -- Fecha de creación
-    fecha_actualizacion TIMESTAMP DEFAULT NOW(), -- Fecha de última actualización
-    CONSTRAINT fk_usuario FOREIGN KEY (usuario_id) REFERENCES usuarios (id) ON DELETE CASCADE
-);
-
 -- Crear productos de una bodega
 CREATE TABLE productos_bodega (
     id SERIAL PRIMARY KEY,                     -- Identificador único del registro
@@ -62,3 +50,31 @@ CREATE TABLE historial_precios_producto_bodega (
 
 -- para setear el id de la db
 SELECT setval('usuarios_id_seq', (SELECT MAX(id) FROM productos));
+
+-- Crear negocio
+CREATE TABLE negocio (
+    id SERIAL PRIMARY KEY,                -- Identificador único del negocio (autoincrementable)
+    usuario_id INT NOT NULL,              -- Usuario dueño del negocio
+    nombre VARCHAR(255) NOT NULL,         -- Nombre del negocio
+    region VARCHAR(100) NOT NULL,         -- Región del negocio
+    comuna VARCHAR(100) NOT NULL,         -- Comuna del negocio
+    direccion VARCHAR(255) NOT NULL,      -- Dirección del negocio
+    email VARCHAR(255) NOT NULL,          -- Email del negocio
+    telefono VARCHAR(20),                 -- Número de teléfono del negocio
+    tipo_negocio VARCHAR(100) NOT NULL,   -- Tipo de negocio (por ejemplo, almacén, farmacia, etc.)
+    fecha_creacion TIMESTAMP DEFAULT NOW(), -- Fecha de creación
+    fecha_actualizacion TIMESTAMP DEFAULT NOW()  -- Fecha de última actualización
+);
+
+-- Crear tabla bodega
+CREATE TABLE bodega (
+    id SERIAL PRIMARY KEY,                -- Identificador único de la bodega (autoincrementable)
+    negocio_id INT NOT NULL,              -- Identificador del negocio asociado (clave foránea)
+    nombre VARCHAR(255) NOT NULL,         -- Nombre de la bodega
+    region VARCHAR(100) NOT NULL,         -- Región de la bodega
+    comuna VARCHAR(100) NOT NULL,         -- Comuna de la bodega
+    direccion VARCHAR(255) NOT NULL,      -- Dirección de la bodega
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Fecha de creación de la bodega
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Fecha de última actualización
+    FOREIGN KEY (negocio_id) REFERENCES negocio(id)  -- Relación con la tabla de negocio
+);
