@@ -2,7 +2,7 @@ const pool = require('../db/pool');
 const moment = require('moment');
 
 exports.createVencimiento = async (req, res) => {
-    const { producto_bodega_id, fecha_vencimiento, cantidad, usuario_id} = req.body;
+    const { producto_bodega_id, fecha_vencimiento, cantidad, usuario_id, bodega_id} = req.body;
     console.log('req.bodyVenci',req.body)
 
     if (!producto_bodega_id || !fecha_vencimiento || !cantidad) {
@@ -13,11 +13,11 @@ exports.createVencimiento = async (req, res) => {
 
     try {
         const query = `
-            INSERT INTO vencimientos_productos_bodega (producto_bodega_id, fecha_vencimiento, cantidad, fecha_creacion, usuario_id)
-            VALUES ($1, $2, $3, NOW(), $4)
+            INSERT INTO vencimientos_productos_bodega (producto_bodega_id, fecha_vencimiento, cantidad, fecha_creacion, usuario_id, bodega_id)
+            VALUES ($1, $2, $3, NOW(), $4, $5)
             RETURNING *;
         `;
-        const values = [producto_bodega_id, fechaVencimiento, cantidad, usuario_id];
+        const values = [producto_bodega_id, fechaVencimiento, cantidad, usuario_id, bodega_id];
 
         const result = await pool.query(query, values);
         res.status(201).json(result.rows[0]);
@@ -57,7 +57,9 @@ exports.getVencimientosByProductoBodegaId = async (req, res) => {
 };
 
 // Obtener todos los vencimientos
-exports.getAllVencimientos = async (req, res) => {
+exports.getAllVencimientosPorBodega = async (req, res) => {
+    const { bodega_id } = req.params;
+    
     try {
         const query = `
             SELECT 
@@ -72,9 +74,10 @@ exports.getAllVencimientos = async (req, res) => {
                 productos p ON pb.producto_id = p.id
             JOIN 
                 usuarios u ON vpb.usuario_id = u.id
+            WHERE vpb.bodega_id = $1
             ORDER BY fecha_vencimiento asc;
         `;
-        const result = await pool.query(query);
+        const result = await pool.query(query, [bodega_id]);
         res.status(200).json(result.rows);
     } catch (err) {
         console.error(err.message);

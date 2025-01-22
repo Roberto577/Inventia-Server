@@ -20,9 +20,12 @@ exports.createMovimiento = async (req, res) => {
 };
 
 // Obtener todos los movimientos
-exports.getAllMovimientos = async (req, res) => {
+exports.getAllMovimientosPorBodega = async (req, res) => {
+  const { bodega_id } = req.params;
+  console.log('holaaaaa')
+
   try {
-    const result = await pool.query(`
+    const query = `
       SELECT 
         mpb.*, 
         p.nombre AS producto_nombre, 
@@ -35,8 +38,10 @@ exports.getAllMovimientos = async (req, res) => {
         productos p ON pb.producto_id = p.id
       JOIN 
         usuarios u ON mpb.usuario_id = u.id
-      ORDER BY id DESC
-      `);
+      WHERE mpb.bodega_id = $1
+      ORDER BY id DESC;
+    `;
+    const result = await pool.query(query, [bodega_id]);
     res.status(200).json(result.rows);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los movimientos', error });
@@ -46,6 +51,7 @@ exports.getAllMovimientos = async (req, res) => {
 // Obtener todos los movimientos por id del producto en la bodega
 exports.getMovimientoByProductoBodegaId = async (req, res) => {
   const { producto_bodega_id } = req.params;
+  console.log('Hola',producto_bodega_id);
 
   console.log('producto_bodega_id', producto_bodega_id);
   try {

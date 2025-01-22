@@ -4,7 +4,7 @@ const movimientosController = require('../controllers/movimientoInventarioContro
 
 // Rutas CRUD
 router.post('/', movimientosController.createMovimiento);
-router.get('/', movimientosController.getAllMovimientos);
+router.get('/bodega/:bodega_id', movimientosController.getAllMovimientosPorBodega);
 router.get('/:producto_bodega_id', movimientosController.getMovimientoByProductoBodegaId);
 router.put('/:id', movimientosController.updateMovimiento);
 router.delete('/:id', movimientosController.deleteMovimiento);

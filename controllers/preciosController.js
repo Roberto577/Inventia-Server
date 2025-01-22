@@ -1,11 +1,11 @@
 const pool = require('../db/pool');
 
 exports.createHistorialPrecio = async (req, res) => {
-    const { producto_bodega_id, precio_anterior, precio_nuevo, descripcion, usuario_id } = req.body;
+    const { producto_bodega_id, precio_anterior, precio_nuevo, descripcion, usuario_id, bodega_id } = req.body;
 
     console.log('req.body',req.body)
   
-    if (!producto_bodega_id || !precio_anterior || !precio_nuevo || !usuario_id) {
+    if (!producto_bodega_id || !precio_anterior || !precio_nuevo || !usuario_id || !bodega_id) {
       return res.status(400).json({
         error: "Todos los campos obligatorios deben estar presentes: producto_bodega_id, precio_anterior, precio_nuevo, usuario_id",
       });
@@ -14,12 +14,12 @@ exports.createHistorialPrecio = async (req, res) => {
     try {
       const query = `
         INSERT INTO historial_precios_producto_bodega 
-        (producto_bodega_id, precio_anterior, precio_nuevo, fecha_cambio, descripcion, usuario_id)
-        VALUES ($1, $2, $3, NOW(), $4, $5)
+        (producto_bodega_id, precio_anterior, precio_nuevo, fecha_cambio, descripcion, usuario_id, bodega_id)
+        VALUES ($1, $2, $3, NOW(), $4, $5, $6)
         RETURNING *;
       `;
   
-      const values = [producto_bodega_id, precio_anterior, precio_nuevo, descripcion, usuario_id];
+      const values = [producto_bodega_id, precio_anterior, precio_nuevo, descripcion, usuario_id, bodega_id];
   
       const result = await pool.query(query, values);
   
